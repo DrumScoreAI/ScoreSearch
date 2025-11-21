@@ -1,5 +1,5 @@
 """
-Main application module for ScoreFinder.
+Main application module for ScoreSearch.
 
 Coordinates the search, conversion and verification of
 drum notation files.
@@ -18,16 +18,16 @@ from .search import NotationSearcher, SearchResult
 logger = logging.getLogger(__name__)
 
 
-class ScoreFinder:
+class ScoreSearch:
     """Main application class for finding and processing drum notation."""
 
     def __init__(self):
-        """Initialize ScoreFinder with all required components."""
+        """Initialize ScoreSearch with all required components."""
         # Validate configuration
         if not config.validate():
             raise ValueError(
                 "Invalid configuration. Please ensure all required settings are "
-                "set in .scorefinder file"
+                "set in ~/.scoresearch file"
             )
         
         self.searcher = NotationSearcher()
