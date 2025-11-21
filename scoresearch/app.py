@@ -52,54 +52,58 @@ class ScoreSearch:
         artist: Optional[str] = None,
         found_counter: int = 0,
         skipped_counter : int = 0
-    ) -> tuple[int, int]:
+    ) -> Optional[tuple[int, int, int]]:
         """
         Find drum notation for a song, with interactive prompts for processing.
         """
+
         logger.info(f"Finding drum notation for: {song_name}" + 
                    (f" by {artist}" if artist else ""))
         
         # Step 1: Search for notation
-        print(f"\n🔍 Searching for drum notation...")
+        print(f"\n🔍\tSearching for drum notation...")
         results = self.searcher.search_drum_notation(song_name, artist, skipped_urls=self.skipped_urls)
 
+        viewed_counter = found_counter
+        progress_denom = found_counter + len(results)
+        progress_num = viewed_counter
         found_counter += len(results)
+        _len_results = len(results)
         
         if not results:
-            print("❌ No new results found")
+            print("❌\tNo new results found")
             return None
         
-        print(f"✓ Found {len(results)} new results to process.")
+        print(f"✓\tFound {_len_results} new results to process.")
 
-        # Step 2: Interactively process results
+        # Step 2: Interactively display results
         for i, result in enumerate(results, 1):
-            print(f"\n{"-"*20}\n📄 Result {i}/{len(results)}: {result.title}")
+            print(f"\n{"-"*20}\n📄 Result {i+progress_num}/{progress_denom}: {result.title}")
             print(f"   Format: {result.file_format}, URL: {result.url}")
             
             # Interactive prompt
             while True:
-                if i < len(results):
-                    choice = input("   ➡️  Choose an action: (S)kip, (Q)uit: ").lower()
+                if i < _len_results:
+                    choice = input("   ➡️\tChoose an action: (S)kip, (Q)uit: ").lower()
                     if choice in ['s', 'q']:
                         break
                 else:
-                    choice = input(f"   ➡️  Choose an action: (F)ind {len(results) - i} more, (S)kip, (Q)uit: ").lower()
+                    choice = input(f"   ➡️\tChoose an action: (F)ind {_len_results} more, (S)kip, (Q)uit: ").lower()
                     if choice in ['f', 's', 'q']:
                         break
                 
                 print("      Invalid choice, please try again.")
 
             if choice == 'q':
-                print("\n🛑 Quitting.")
-                return None
+                print("\n🛑\tQuitting.")
+                return found_counter, found_counter // 10 + i - 1, skipped_counter
             elif choice == 's':
-                print("   ⏭️  Skipping.")
+                print("   ⏭️\tSkipping.")
                 self._add_skipped_url(result.url) # Add to skipped list so we don't see it again
                 skipped_counter += 1
                 continue
             elif choice == 'f':
-                print(f"   🔄 Finding {len(results) - i} more results...")
+                print(f"   🔄\tFinding {_len_results} more results...")
                 return self.find_notation(song_name, artist, found_counter=found_counter, skipped_counter=skipped_counter)
-        
-        print("\n❌ Could not process any results successfully")
-        return found_counter, skipped_counter
+
+        return found_counter, found_counter // 10 + i - 1, skipped_counter

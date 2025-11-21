@@ -53,12 +53,17 @@ def find(song_name: str, artist: str):
     try:
         app = ScoreSearch()
         found = 0
+        viewed = 0
         skipped = 0
-        found, skipped = app.find_notation(song_name=song_name, artist=artist)
+        results = app.find_notation(song_name=song_name, artist=artist)
+
+        if results:
+            found, viewed, skipped = results
         
         if found > 0:
-            print(f"\n{Fore.GREEN}✓ Found {found} results{Style.RESET_ALL}")
-            print(f"{Fore.YELLOW}⚠ Skipped {skipped} results{Style.RESET_ALL}")
+            print(f"\n{Fore.GREEN}✓\tFound {found} results{Style.RESET_ALL}")
+            print(f"{Fore.BLUE}ℹ\tViewed {viewed} results{Style.RESET_ALL}")
+            print(f"{Fore.YELLOW}⚠\tSkipped {skipped} results{Style.RESET_ALL}")
             sys.exit(0)
         else:
             print(f"\n{Fore.YELLOW}No results found{Style.RESET_ALL}")
