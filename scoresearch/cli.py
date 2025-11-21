@@ -37,14 +37,14 @@ def cli():
 @cli.command()
 @click.argument('song_name')
 @click.option('--artist', '-a', help='Artist name to refine search')
-def list(song_name: str, artist: str):
+def find(song_name: str, artist: str):
     """
-    List drum notation search results.
+    Find drum notation search results.
     
     SONG_NAME: Name of the song to search for
     
     Example:
-        scoresearch list "Enter Sandman" --artist "Metallica"
+        scoresearch find "Enter Sandman" --artist "Metallica"
     """
     print(f"\n{Fore.CYAN}╔══════════════════════════════════════════════╗{Style.RESET_ALL}")
     print(f"{Fore.CYAN}║         ScoreSearch v{__version__}                ║{Style.RESET_ALL}")
