@@ -1,5 +1,5 @@
 """
-Configuration management for ScoreFinder.
+Configuration management for ScoreSearch.
 
 Loads configuration from environment variables and provides
 access to application settings.
@@ -7,11 +7,10 @@ access to application settings.
 
 import os
 from pathlib import Path
-from typing import Optional
 from dotenv import load_dotenv
 
-# Load environment variables from .scorefinder file
-load_dotenv(os.path.expanduser("~/.scorefinder"))
+# Load environment variables from .scoresearch file
+load_dotenv(os.path.expanduser("~/.scoresearch"))
 
 
 class Config:
@@ -20,13 +19,12 @@ class Config:
     def __init__(self):
         """Initialize configuration from environment variables."""
         # Project root directory
-        sfhome = os.environ.get("SFHOME")
-        if not sfhome:
-            raise ValueError("SFHOME environment variable must be set.")
-        self.project_root = Path(sfhome)
-
+        scoresearchhome = os.environ.get("SCORESEARCHHOME")
+        if not scoresearchhome:
+            raise ValueError("SCORESEARCHHOME environment variable must be set.")
+        self.project_root = Path(scoresearchhome)
         # Google API settings
-        with open(os.path.expanduser('~/.scorefinder'), 'r') as config_f:
+        with open(os.path.expanduser('~/.scoresearch'), 'r') as config_f:
             self.gemini_api_key = ''
             self.google_search_api_key = ''
             self.google_search_engine_id = ''
@@ -36,7 +34,6 @@ class Config:
             self.minimum_measures = 20
             self.maximum_search_results = 10
             self.llm_model = 'gemini-2.5-flash'
-            self.save_intermediate = False
 
             for line in config_f.readlines():
                 if len(line) == 0:
@@ -64,8 +61,6 @@ class Config:
                                 self.maximum_search_results = int(v)
                             if k == 'LLM_MODEL':
                                 self.llm_model = v
-                            if k == 'SAVE_INTERMEDIATE':
-                                self.save_intermediate = v.lower() in ('true', '1', 'yes')
         
         # Create directories if they don't exist
         self.output_dir.mkdir(parents=True, exist_ok=True)
