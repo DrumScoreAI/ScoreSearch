@@ -8,9 +8,6 @@ drum notation files.
 import logging
 from pathlib import Path
 from typing import List, Optional
-import sys
-import subprocess
-import os
 
 from .config import config
 from .search import NotationSearcher, SearchResult
@@ -53,7 +50,9 @@ class ScoreSearch:
         self,
         song_name: str,
         artist: Optional[str] = None,
-    ) -> Optional[Path]:
+        found_counter: int = 0,
+        skipped_counter : int = 0
+    ) -> tuple[int, int]:
         """
         Find drum notation for a song, with interactive prompts for processing.
         """
@@ -62,7 +61,9 @@ class ScoreSearch:
         
         # Step 1: Search for notation
         print(f"\n🔍 Searching for drum notation...")
-        results = self.searcher.search_drum_notation(song_name, artist, failed_urls=self.failed_urls)
+        results = self.searcher.search_drum_notation(song_name, artist, skipped_urls=self.skipped_urls)
+
+        found_counter += len(results)
         
         if not results:
             print("❌ No new results found")
@@ -78,12 +79,12 @@ class ScoreSearch:
             # Interactive prompt
             while True:
                 if i < len(results):
-                    choice = input("   ➡️  Choose an action: (V)iew in browser, (S)kip, (Q)uit: ").lower()
-                    if choice in ['v', 's', 'q']:
+                    choice = input("   ➡️  Choose an action: (S)kip, (Q)uit: ").lower()
+                    if choice in ['s', 'q']:
                         break
                 else:
-                    choice = input(f"   ➡️  Choose an action: (V)iew in browser, (F)ind {len(results) - i} more, (S)kip, (Q)uit: ").lower()
-                    if choice in ['v', 'f', 's', 'q']:
+                    choice = input(f"   ➡️  Choose an action: (F)ind {len(results) - i} more, (S)kip, (Q)uit: ").lower()
+                    if choice in ['f', 's', 'q']:
                         break
                 
                 print("      Invalid choice, please try again.")
@@ -94,44 +95,11 @@ class ScoreSearch:
             elif choice == 's':
                 print("   ⏭️  Skipping.")
                 self._add_skipped_url(result.url) # Add to skipped list so we don't see it again
+                skipped_counter += 1
                 continue
-
+            elif choice == 'f':
+                print(f"   🔄 Finding {len(results) - i} more results...")
+                return self.find_notation(song_name, artist, found_counter=found_counter, skipped_counter=skipped_counter)
         
         print("\n❌ Could not process any results successfully")
-        return None
-
-    def list_results(
-        self,
-        song_name: str,
-        artist: Optional[str] = None
-    ) -> List[SearchResult]:
-        """
-        List search results without processing them.
-
-        Args:
-            song_name: Name of the song
-            artist: Optional artist name
-
-        Returns:
-            A list of SearchResult objects.
-        """
-        print(f"\n🔍 Searching for drum notation...")
-        results = self.searcher.search_drum_notation(song_name, artist, skipped_urls=self.skipped_urls)
-        
-        if not results:
-            print("❌ No new results found")
-            return []
-        
-        print(f"\n✓ Found {len(results)} new results:\n")
-
-        if not results:
-            return []
-        
-        for i, result in enumerate(results, 1):
-            print(f"{i}. {result.title}")
-            print(f"   Format: {result.file_format}")
-            print(f"   URL: {result.url}")
-            print(f"   {result.snippet[:100]}...")
-            print()
-        
-        return results
+        return found_counter, skipped_counter
