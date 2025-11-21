@@ -39,27 +39,34 @@ pip install -e .
 
 1.  Copy the example environment file:
     ```bash
-    cp .env.example .env
+    cp .scoresearch.example .scoresearch
     ```
 
-2.  Edit `.env` and add your API credentials:
-    ```env
+2.  Set up environment variable (optionally add this to your .bashrc):
+    ```bash
+    export SCORESEARCHSOME=$PWD
+    ```
+
+
+3.  Edit `.scoresearch` and add your API credentials:
+    ```bash
     GOOGLE_API_KEY=your_google_api_key_here
     GOOGLE_SEARCH_ENGINE_ID=your_search_engine_id_here
     ```
+
 
 ### Getting API Credentials
 
 #### Google API Key
 1.  Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
 2.  Create a new API key
-3.  Copy the key to your `.env` file
+3.  Copy the key to your `.scoresearch` file
 
 #### Google Custom Search Engine ID
 1.  Go to [Google Programmable Search Engine](https://programmablesearchengine.google.com/)
 2.  Create a new search engine
 3.  Enable "Search the entire web"
-4.  Copy the Search Engine ID to your `.env` file
+4.  Copy the Search Engine ID to your `.scoresearch` file
 
 ## Usage
 

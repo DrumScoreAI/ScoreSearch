@@ -92,13 +92,16 @@ If no relevant links can be found, you will see:
 ## Troubleshooting
 
 ### Error: "Google API key is required"
-This means your `.env` file is missing or incomplete.
-1.  Create the file if it doesn't exist: `cp .env.example .env`
-2.  Edit the `.env` file and add your API keys.
+This means your `.scoresearch` file is missing or incomplete.
+1.  Create the file if it doesn't exist: `cp .scoresearch.example .scoresearch`
+2.  Edit the `.scoresearch` file and add your API keys.
 
-## API Usage Considerations
+### Error: "SCORESEARCHHOME environment variable not set" or file not found
+This error indicates that the script cannot locate its root directory. The `$SCORESEARCHHOME` environment variable must be set to the project's root folder, which is used to locate configuration and other files.
 
-### Google Search API
+To fix this, set the variable to the absolute path of the project directory.
+
+**For the current terminal session:**
 - The free tier has a limit of 100 queries per day. Each `scoresearch search` command uses one query.
 
 ### Google Gemini API
