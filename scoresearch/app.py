@@ -31,23 +31,23 @@ class ScoreSearch:
             )
         
         self.searcher = NotationSearcher()
-        self.failed_urls_file = config.project_root / "failed_urls.txt"
-        self.failed_urls = self._load_failed_urls()
+        self.skipped_urls_file = config.project_root / "skipped_urls.txt"
+        self.skipped_urls = self._load_skipped_urls()
 
-    def _load_failed_urls(self) -> set[str]:
-        """Load failed URLs from the data file."""
-        if not self.failed_urls_file.exists():
+    def _load_skipped_urls(self) -> set[str]:
+        """Load skipped URLs from the data file."""
+        if not self.skipped_urls_file.exists():
             return set()
-        with open(self.failed_urls_file, 'r', encoding='utf-8') as f:
+        with open(self.skipped_urls_file, 'r', encoding='utf-8') as f:
             return {line.strip() for line in f if line.strip()}
 
-    def _add_failed_url(self, url: str):
-        """Add a URL to the failed list and save it to the file."""
-        if url not in self.failed_urls:
-            self.failed_urls.add(url)
-            with open(self.failed_urls_file, 'a', encoding='utf-8') as f:
+    def _add_skipped_url(self, url: str):
+        """Add a URL to the skipped list and save it to the file."""
+        if url not in self.skipped_urls:
+            self.skipped_urls.add(url)
+            with open(self.skipped_urls_file, 'a', encoding='utf-8') as f:
                 f.write(f"{url}\n")
-            logger.info(f"Added failed URL to list: {url}")
+            logger.info(f"Added skipped URL to list: {url}")
 
     def find_notation(
         self,
@@ -93,7 +93,7 @@ class ScoreSearch:
                 return None
             elif choice == 's':
                 print("   ⏭️  Skipping.")
-                self._add_failed_url(result.url) # Add to failed list so we don't see it again
+                self._add_skipped_url(result.url) # Add to skipped list so we don't see it again
                 continue
 
         
@@ -116,7 +116,7 @@ class ScoreSearch:
             A list of SearchResult objects.
         """
         print(f"\n🔍 Searching for drum notation...")
-        results = self.searcher.search_drum_notation(song_name, artist, failed_urls=self.failed_urls)
+        results = self.searcher.search_drum_notation(song_name, artist, skipped_urls=self.skipped_urls)
         
         if not results:
             print("❌ No new results found")

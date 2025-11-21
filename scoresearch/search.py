@@ -61,7 +61,7 @@ class NotationSearcher:
         self,
         song_name: str,
         artist: Optional[str] = None,
-        failed_urls: Optional[Set[str]] = None
+        skipped_urls: Optional[Set[str]] = None
     ) -> List[SearchResult]:
         """
         Search for drum notation using Google Custom Search API.
@@ -83,8 +83,8 @@ class NotationSearcher:
         
         valid_results: List[SearchResult] = []
         processed_urls = set()
-        if failed_urls:
-            processed_urls.update(failed_urls)
+        if skipped_urls:
+            processed_urls.update(skipped_urls)
         
         start_index = 1
         num_to_fetch = config.maximum_search_results
