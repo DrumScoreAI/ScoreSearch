@@ -27,10 +27,9 @@ logging.basicConfig(
 @click.version_option(version=__version__)
 def cli():
     """
-    ScoreSearch - Find and convert drum notation.
+    ScoreSearch - Find drum notation.
     
-    Search for drum scores using Google Search, convert them to MusicXML
-    using Google Gemini AI and verify them.
+    Search for drum scores using Google Search and Google Gemini AI.
     """
     pass
 
